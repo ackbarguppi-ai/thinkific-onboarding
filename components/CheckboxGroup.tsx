@@ -9,12 +9,17 @@ interface CheckboxGroupProps {
 
 export default function CheckboxGroup({ options, onSubmit }: CheckboxGroupProps) {
   const [selected, setSelected] = useState<string[]>([]);
+  const [customText, setCustomText] = useState("");
 
   const toggle = (option: string) => {
     setSelected((prev) =>
       prev.includes(option) ? prev.filter((o) => o !== option) : [...prev, option]
     );
   };
+
+  const allSelected = customText.trim()
+    ? [...selected, customText.trim()]
+    : selected;
 
   return (
     <div className="animate-fade-slide-up space-y-3">
@@ -44,13 +49,23 @@ export default function CheckboxGroup({ options, onSubmit }: CheckboxGroupProps)
           );
         })}
       </div>
+      <div className="flex gap-2 items-center">
+        <label className="text-xs text-white/50 shrink-0">Other (type your own)</label>
+        <input
+          type="text"
+          value={customText}
+          onChange={(e) => setCustomText(e.target.value)}
+          placeholder="Add your own..."
+          className="flex-1 rounded-xl bg-surface-light border border-white/10 px-3 py-2 text-sm text-[#e4e4ed] placeholder-white/40 focus:outline-none focus:border-accent-indigo transition-colors"
+        />
+      </div>
       <button
         type="button"
-        onClick={() => { if (selected.length > 0) onSubmit(selected); }}
-        disabled={selected.length === 0}
+        onClick={() => { if (allSelected.length > 0) onSubmit(allSelected); }}
+        disabled={allSelected.length === 0}
         className="px-5 py-2.5 rounded-xl bg-accent-indigo text-white font-medium hover:bg-accent-indigo/80 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
-        Continue ({selected.length} selected)
+        Continue ({allSelected.length} selected)
       </button>
     </div>
   );

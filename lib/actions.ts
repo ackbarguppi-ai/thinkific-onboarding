@@ -14,6 +14,8 @@ export interface OnboardingData {
   name: string;
   email: string;
   company: string;
+  phone_number: string;
+  book_call: boolean;
 }
 
 const ENTERPRISE_PLATFORMS = [
@@ -22,11 +24,19 @@ const ENTERPRISE_PLATFORMS = [
 
 export function computeIsPlusLead(data: OnboardingData): boolean {
   if (
-    data.expected_learners === "1,000-10,000" ||
-    data.expected_learners === "10,000+"
+    data.expected_learners === "1,000,000+" ||
+    data.expected_learners === "100,000+" ||
+    data.expected_learners === "10,000+" ||
+    data.expected_learners === "1,000-10,000"
   )
     return true;
-  if (data.org_size === "51-200" || data.org_size === "200+") return true;
+  if (
+    data.org_size === "10,000+" ||
+    data.org_size === "1,000-10,000" ||
+    data.org_size === "200-1,000" ||
+    data.org_size === "51-200"
+  )
+    return true;
   if (
     data.use_case === "Customer training" ||
     data.use_case === "Certification programs"

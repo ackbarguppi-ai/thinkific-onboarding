@@ -101,9 +101,8 @@ export default function OnboardingChat() {
         case 3: {
           await showTypingThenMessage("Who will you be teaching?");
           setInput({
-            kind: "text",
-            suggestions: ["Customers", "Students", "Employees", "Partners", "General public"],
-            placeholder: "Type your audience...",
+            kind: "checkbox",
+            options: ["Customers", "Students", "Employees", "Partners", "General public"],
           });
           break;
         }
@@ -140,7 +139,7 @@ export default function OnboardingChat() {
           await showTypingThenMessage("How many learners do you expect?");
           setInput({
             kind: "choice",
-            options: ["Under 100", "100-1,000", "1,000-10,000", "10,000+", "Not sure"],
+            options: ["1,000,000+", "100,000+", "10,000+", "1,000-10,000", "100-1,000", "Under 100"],
           });
           break;
         }
@@ -148,7 +147,7 @@ export default function OnboardingChat() {
           await showTypingThenMessage("What size is your organization?");
           setInput({
             kind: "choice",
-            options: ["Just me", "2-10", "11-50", "51-200", "200+"],
+            options: ["10,000+", "1,000-10,000", "200-1,000", "51-200", "11-50", "2-10", "Just me"],
           });
           break;
         }
@@ -195,7 +194,7 @@ export default function OnboardingChat() {
 
   // Handle user responses
   const handleUserResponse = useCallback(
-    async (value: string | string[] | { name: string; email: string; company: string }) => {
+    async (value: string | string[] | { name: string; email: string; company: string; phone_number: string; book_call: boolean }) => {
       setInput({ kind: "none" });
 
       switch (step) {
@@ -210,9 +209,9 @@ export default function OnboardingChat() {
           break;
         }
         case 3: {
-          const val = value as string;
-          addMessage("user", val);
-          answersRef.current.teaching_audience = val;
+          const vals = value as string[];
+          addMessage("user", vals.join(", "));
+          answersRef.current.teaching_audience = vals.join(", ");
           setCurrentStep(4);
           setStep(4);
           advanceStep(4);
@@ -311,11 +310,13 @@ export default function OnboardingChat() {
           break;
         }
         case 9: {
-          const contact = value as { name: string; email: string; company: string };
+          const contact = value as { name: string; email: string; company: string; phone_number: string; book_call: boolean };
           addMessage("user", `${contact.name} — ${contact.email} — ${contact.company}`);
           answersRef.current.name = contact.name;
           answersRef.current.email = contact.email;
           answersRef.current.company = contact.company;
+          answersRef.current.phone_number = contact.phone_number;
+          answersRef.current.book_call = contact.book_call;
 
           // Save to Supabase
           const data = answersRef.current as OnboardingData;
